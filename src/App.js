@@ -7,15 +7,49 @@ import { useState, useEffect } from "react";
 function App() {
   const [dice, setDice] = useState(allNewDice());
   const [tenzies, setTenzies] = useState(false);
+  const [count, setCount] = useState([]);
+  const [timer, setTimer] = useState(0);
+  const [bestTime, setBestTime] = useState(
+    JSON.parse(localStorage.getItem("bestTime") || null)
+  );
+  const [gameStarted, setGameStarted] = useState(false);
+
+  useEffect(() => {
+    const yourBestTime = localStorage.getItem("bestTime");
+    if (tenzies) {
+      if (!yourBestTime) {
+        localStorage.setItem("bestTime", JSON.stringify(timer));
+        setBestTime(timer);
+      } else if (timer < parseInt(yourBestTime)) {
+        localStorage.setItem("bestTime", JSON.stringify(timer));
+        setBestTime(timer);
+      }
+    }
+  }, [tenzies, timer]);
+
+  useEffect(() => {
+    if (gameStarted && !tenzies) {
+      let sec = setInterval(() => {
+        setTimer((prevTimer) => prevTimer + 1);
+      }, 1000);
+      return () => {
+        clearInterval(sec);
+      };
+    }
+  }, [gameStarted, tenzies]);
 
   useEffect(() => {
     const allHeld = dice.every((die) => die.isHeld);
     const firstValue = dice[0].value;
     const allSameValue = dice.every((die) => die.value === firstValue);
-    if (allHeld && allSameValue) {
+    if (gameStarted && allHeld && allSameValue) {
       setTenzies(true);
     }
-  }, [dice]);
+  }, [dice, gameStarted]);
+
+  function startGame() {
+    setGameStarted(true);
+  }
 
   function generateNewDie() {
     return {
@@ -33,7 +67,16 @@ function App() {
     return newDice;
   }
 
+  function countRolls() {
+    tenzies ? setCount([]) : setCount((prev) => [...prev, prev.length + 1]);
+  }
+
+  // function countTime() {
+  //   tenzies && setTimer(0);
+  // }
+
   function rollDice() {
+    countRolls();
     if (!tenzies) {
       setDice((oldDice) =>
         oldDice.map((die) => {
@@ -43,6 +86,7 @@ function App() {
     } else {
       setTenzies(false);
       setDice(allNewDice());
+      // setTimer(0);
     }
   }
 
@@ -72,9 +116,24 @@ function App() {
         current value between rolls.
       </p>
       <div className="dice-container">{diceElements}</div>
-      <button className="roll-dice" onClick={rollDice}>
+      <button
+        className="roll-dice"
+        onClick={() => {
+          rollDice();
+          startGame();
+        }}
+      >
         {tenzies ? "New Game" : "Roll"}
       </button>
+
+      {tenzies && (
+        <p>
+          Rolls: {count.length}
+          <br></br>
+          Time: {timer}s<br></br>
+          BestTime: {bestTime}s
+        </p>
+      )}
     </main>
   );
 }
