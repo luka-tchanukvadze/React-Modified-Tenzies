@@ -15,17 +15,27 @@ function App() {
   const [gameStarted, setGameStarted] = useState(false);
 
   useEffect(() => {
-    const yourBestTime = localStorage.getItem("bestTime");
     if (tenzies) {
-      if (!yourBestTime) {
-        localStorage.setItem("bestTime", JSON.stringify(timer));
-        setBestTime(timer);
-      } else if (timer < parseInt(yourBestTime)) {
-        localStorage.setItem("bestTime", JSON.stringify(timer));
-        setBestTime(timer);
+      const yourBestTime = localStorage.getItem("bestTime");
+      if (!yourBestTime || timer < yourBestTime) {
+        localStorage.setItem("bestTime", timer.toString());
+        setBestTime(timer.toString());
       }
     }
   }, [tenzies, timer]);
+
+  // useEffect(() => {
+  //   const yourBestTime = localStorage.getItem("bestTime");
+  //   if (tenzies) {
+  //     if (!yourBestTime) {
+  //       localStorage.setItem("bestTime", JSON.stringify(timer));
+  //       setBestTime(timer);
+  //     } else if (timer < parseInt(yourBestTime)) {
+  //       localStorage.setItem("bestTime", JSON.stringify(timer));
+  //       setBestTime(timer);
+  //     }
+  //   }
+  // }, [tenzies, timer]);
 
   useEffect(() => {
     if (gameStarted && !tenzies) {
@@ -77,7 +87,7 @@ function App() {
 
   function rollDice() {
     countRolls();
-    if (gameStarted && !tenzies) {
+    if (!tenzies) {
       setDice((oldDice) =>
         oldDice.map((die) => {
           return die.isHeld ? die : generateNewDie();
