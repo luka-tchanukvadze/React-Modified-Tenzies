@@ -10,14 +10,6 @@ const mySound = new Howl({
   src: [clap],
 });
 
-// const sound1 = new Howl({
-//   src: diceRoll,
-// });
-
-// const sound2 = new Howl({
-//   src: popDown,
-// });
-
 function App() {
   const [dice, setDice] = useState(allNewDice());
   const [tenzies, setTenzies] = useState(false);
@@ -37,19 +29,6 @@ function App() {
       }
     }
   }, [tenzies, timer]);
-
-  // useEffect(() => {
-  //   const yourBestTime = localStorage.getItem("bestTime");
-  //   if (tenzies) {
-  //     if (!yourBestTime) {
-  //       localStorage.setItem("bestTime", JSON.stringify(timer));
-  //       setBestTime(timer);
-  //     } else if (timer < parseInt(yourBestTime)) {
-  //       localStorage.setItem("bestTime", JSON.stringify(timer));
-  //       setBestTime(timer);
-  //     }
-  //   }
-  // }, [tenzies, timer]);
 
   useEffect(() => {
     if (gameStarted && !tenzies) {
@@ -94,10 +73,6 @@ function App() {
   function countRolls() {
     tenzies ? setCount([]) : setCount((prev) => [...prev, prev.length + 1]);
   }
-
-  // function countTime() {
-  //   tenzies && setTimer(0);
-  // }
 
   function rollDice() {
     countRolls();
