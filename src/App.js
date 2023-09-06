@@ -77,7 +77,7 @@ function App() {
 
   function rollDice() {
     countRolls();
-    if (!tenzies) {
+    if (gameStarted && !tenzies) {
       setDice((oldDice) =>
         oldDice.map((die) => {
           return die.isHeld ? die : generateNewDie();
@@ -86,7 +86,7 @@ function App() {
     } else {
       setTenzies(false);
       setDice(allNewDice());
-      // setTimer(0);
+      setTimer(0);
     }
   }
 
@@ -131,7 +131,7 @@ function App() {
           Rolls: {count.length}
           <br></br>
           Time: {timer}s<br></br>
-          BestTime: {bestTime}s
+          BestTime: {bestTime ? `${bestTime}s` : "N/A"}
         </p>
       )}
     </main>
