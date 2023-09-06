@@ -3,6 +3,20 @@ import Die from "./Die";
 import { nanoid } from "nanoid";
 import Confetti from "react-confetti";
 import { useState, useEffect } from "react";
+import { Howl, Howler } from "howler";
+import clap from "./clap.mp3";
+
+const mySound = new Howl({
+  src: [clap],
+});
+
+// const sound1 = new Howl({
+//   src: diceRoll,
+// });
+
+// const sound2 = new Howl({
+//   src: popDown,
+// });
 
 function App() {
   const [dice, setDice] = useState(allNewDice());
@@ -117,9 +131,14 @@ function App() {
     />
   ));
 
+  function playMySound() {
+    mySound.play();
+  }
+
   return (
     <main>
       {tenzies && <Confetti />}
+      {tenzies && playMySound()}
       <h1 className="title">Tenzies</h1>
       <p className="instructions">
         Roll until all dice are the same. Click each die to freeze it at its
@@ -137,11 +156,11 @@ function App() {
       </button>
 
       {tenzies && (
-        <p>
+        <p className="results">
           Rolls: {count.length}
           <br></br>
           Time: {timer}s<br></br>
-          BestTime: {bestTime ? `${bestTime}s` : "N/A"}
+          Best Time: {bestTime ? `${bestTime}s` : "N/A"}
         </p>
       )}
     </main>
